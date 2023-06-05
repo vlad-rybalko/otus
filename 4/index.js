@@ -8,22 +8,17 @@ function tree(directory) {
     };
 
     function traverse(currentDir) {
-        fs.readdir(currentDir, { withFileTypes: true }, (err, entries) => {
-            if (err) {
-                console.error(err);
-                return;
+        const entries = fs.readdirSync(currentDir, { withFileTypes: true });
+
+        entries.forEach((entry) => {
+            const entryPath = path.join(currentDir, entry.name);
+
+            if (entry.isFile()) {
+                result.files.push(entryPath);
+            } else if (entry.isDirectory()) {
+                result.folders.push(entryPath);
+                traverse(entryPath);
             }
-
-            entries.forEach((entry) => {
-                const entryPath = path.join(currentDir, entry.name);
-
-                if (entry.isFile()) {
-                    result.files.push(entryPath);
-                } else if (entry.isDirectory()) {
-                    result.folders.push(entryPath);
-                    traverse(entryPath); // Recursive call for subdirectories
-                }
-            });
         });
     }
 
@@ -32,6 +27,8 @@ function tree(directory) {
     return result;
 }
 
-const directoryPath = '/';
+const currentDir = __dirname;
+
+const directoryPath = process.argv[2] ?? currentDir;
 const directoryTree = tree(directoryPath);
 console.log(directoryTree);
