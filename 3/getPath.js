@@ -13,7 +13,8 @@ function getPath(element) {
             break;
         } else {
             const classes = Array.from(element.classList);
-            selector += classes.length > 0 ? `.${classes.join('.')}` : '';
+            const index = Array.from(element.parentElement.children).indexOf(element) + 1;
+            selector += classes.length > 0 ? `.${classes.join('.')}:nth-child(${index})` : `:nth-child(${index})`;
 
             selectors.unshift(selector);
         }
