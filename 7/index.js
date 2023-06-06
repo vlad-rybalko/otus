@@ -1,36 +1,83 @@
-const fs = require('fs');
-const path = require('path');
+import { html, LitElement } from 'https://unpkg.com/lit?module';
 
-function tree(dirPath, result = { files: [], dirs: [] }) {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+class MyTree extends LitElement {
+  static properties = {
+    treeData: { type: Object },
+  };
 
-      files.forEach((file) => {
-        const filePath = path.join(dirPath, file.name);
-
-        if (file.isDirectory()) {
-          result.dirs.push(filePath);
-          tree(filePath, result);
-        } else {
-          result.files.push(filePath);
+  constructor() {
+    super();
+    this.treeData = {
+      "id": 1,
+      "items": [
+        {
+          "id": 2,
+          "items": [
+            { "id": 1 }, 
+            { "id": 2 }
+          ]
+        }, 
+        {
+          "id": 3,
+          "items": [
+            { "id": 1 },
+            {
+              "id": 4,
+              "items": [
+                { "id": 1 }, 
+                { "id": 2 }
+              ]
+            }, 
+          ]
         }
-      });
+      ]
+    };
+  }
 
-      resolve(result);
-    });
-  });
+  render() {
+    return html`
+      <ul>
+        ${this.renderTree(this.treeData)}
+      </ul>
+    `;
+  }
+
+  renderTree(data) {
+    return html`
+      <li>
+        <span>${data.id}</span>
+        ${
+          (data.items && data.items.length > 0)
+          ? html`
+              <ul>
+                ${data.items.map((item) => html`<my-tree .treeData=${item}></my-tree>`)}
+              </ul>
+            `
+          : ''
+        }
+      </li>
+    `;
+  }
 }
 
-const dirPath = './';
+class MyLeaf extends LitElement {
+  static properties = {
+    leafData: { type: Number },
+  };
 
-tree(dirPath)
-  .then((result) => {
-    console.log(result);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+  constructor() {
+    super();
+    this.leafData = 0;
+  }
+
+  render() {
+    return html`
+      <li>
+        <span>${this.leafData}</span>
+      </li>
+    `;
+  }
+}
+
+customElements.define('my-tree', MyTree);
+customElements.define('my-leaf', MyLeaf);
