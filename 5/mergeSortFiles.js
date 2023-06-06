@@ -1,8 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const highWaterMark = 1024;
-
 function addListenersToStream(streamObj) {
     streamObj.stream.on('data', (data) => {
         streamObj.stream.pause();
@@ -26,7 +24,7 @@ function getChunkStreams(chunkDir) {
     for (let filename of files) {
         const filePath = path.join(chunkDir, filename);
         const streamObj = {
-            stream: fs.createReadStream(filePath, { highWaterMark }),
+            stream: fs.createReadStream(filePath),
             tail: '',
             length: 0,
             num: undefined,
@@ -116,6 +114,4 @@ async function processChunks(chunkDir, resultFilePath) {
     console.log('Обработка чанков завершена.');
 }
 
-const chunkDirPath = path.join(__dirname, 'chunks');
-const resultFilePath = path.join(__dirname, 'result.txt');
-processChunks(chunkDirPath, resultFilePath);
+module.exports = processChunks;

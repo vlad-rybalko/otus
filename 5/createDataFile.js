@@ -1,7 +1,6 @@
-const path = require('path');
 const fs = require('fs');
 
-const fileSizeInMB = 1; // Размер файла в Мб
+const fileSizeInMB = 100;
 const MB = 1000000;
 
 function generateUnsortedFile(filePath) {
@@ -30,5 +29,4 @@ function generateUnsortedFile(filePath) {
     }
 }
 
-const filePath = path.join(__dirname, 'data.txt');
-generateUnsortedFile(filePath);
+module.exports = generateUnsortedFile;

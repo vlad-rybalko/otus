@@ -2,19 +2,16 @@ const path = require('path');
 const fs = require('fs');
 
 const MB = 1000000;
-const chunkSize = 0.1;
-const highWaterMark = 1024;
-const unsortedFilePath = path.join(__dirname, 'data.txt');
-const chunkDir = path.join(__dirname, 'chunks');
+const chunkSize = 10;
 
-async function splitSortFile(unsortedFilePath, chunkDir) {
+async function splitSortFile(filePath, chunkDir) {
     createOrCheckChunkDir(chunkDir);
 
     let bufferString = '';
     let prevTail = '';
     let fileNameCount = 1;
 
-    const readStream = fs.createReadStream(unsortedFilePath, { highWaterMark });
+    const readStream = fs.createReadStream(filePath);
 
     for await (const chunk of readStream) {
         bufferString += chunk;
@@ -67,7 +64,4 @@ function getSorted(str) {
     return arrayOfNumbers.join(' ');
 }
 
-splitSortFile(unsortedFilePath, chunkDir)
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+module.exports = splitSortFile;
